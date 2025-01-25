@@ -1,4 +1,5 @@
 // import type { Core } from '@strapi/strapi';
+require('dotenv').config();
 
 export default {
   /**
