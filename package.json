@@ -4,11 +4,12 @@
   "private": true,
   "description": "A Strapi application",
   "scripts": {
-    "build": "strapi build",
     "deploy": "strapi deploy",
     "develop": "strapi develop",
     "start": "strapi start",
-    "strapi": "strapi"
+    "strapi": "strapi",
+    "build": "babel src -d lib",
+    "prebuild": "jest"
   },
   "dependencies": {
     "@strapi/plugin-cloud": "5.8.0",
