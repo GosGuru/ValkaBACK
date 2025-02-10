@@ -369,6 +369,46 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
+  collectionName: 'blog_posts';
+  info: {
+    description: '';
+    displayName: 'BlogPost';
+    pluralName: 'blog-posts';
+    singularName: 'blog-post';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    blog_post: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::blog-post.blog-post'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Descripcion: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    DescripcionCorta: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    Estado: Schema.Attribute.Enumeration<['Borrador', 'Publicado']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Publicado'>;
+    featuredImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::blog-post.blog-post'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'Titulo'> & Schema.Attribute.Required;
+    Titulo: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiEjercicioEjercicio extends Struct.CollectionTypeSchema {
   collectionName: 'ejercicios';
   info: {
@@ -378,7 +418,7 @@ export interface ApiEjercicioEjercicio extends Struct.CollectionTypeSchema {
     singularName: 'ejercicio';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     carga: Schema.Attribute.String;
@@ -398,7 +438,7 @@ export interface ApiEjercicioEjercicio extends Struct.CollectionTypeSchema {
     nombre: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     repeticiones: Schema.Attribute.String;
-    rutina: Schema.Attribute.Relation<'manyToOne', 'api::rutina.rutina'>;
+    rutinas: Schema.Attribute.Relation<'manyToMany', 'api::rutina.rutina'>;
     series: Schema.Attribute.String;
     seriesCompletadas: Schema.Attribute.String;
     tiempoBloque: Schema.Attribute.String;
@@ -418,7 +458,7 @@ export interface ApiRutinaRutina extends Struct.CollectionTypeSchema {
     singularName: 'rutina';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -428,7 +468,7 @@ export interface ApiRutinaRutina extends Struct.CollectionTypeSchema {
       ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes']
     >;
     ejercicios: Schema.Attribute.Relation<
-      'oneToMany',
+      'manyToMany',
       'api::ejercicio.ejercicio'
     >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -446,8 +486,8 @@ export interface ApiRutinaRutina extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      'oneToOne',
+    users: Schema.Attribute.Relation<
+      'manyToMany',
       'plugin::users-permissions.user'
     >;
   };
@@ -908,7 +948,6 @@ export interface PluginUsersPermissionsUser
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -922,12 +961,14 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    fotoPerfil: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'plugin::users-permissions.user'
     > &
       Schema.Attribute.Private;
+    Marcas: Schema.Attribute.Text;
     password: Schema.Attribute.Password &
       Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
@@ -940,7 +981,7 @@ export interface PluginUsersPermissionsUser
       'manyToOne',
       'plugin::users-permissions.role'
     >;
-    rutina: Schema.Attribute.Relation<'oneToOne', 'api::rutina.rutina'>;
+    rutinas: Schema.Attribute.Relation<'manyToMany', 'api::rutina.rutina'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -963,6 +1004,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::ejercicio.ejercicio': ApiEjercicioEjercicio;
       'api::rutina.rutina': ApiRutinaRutina;
       'plugin::content-releases.release': PluginContentReleasesRelease;

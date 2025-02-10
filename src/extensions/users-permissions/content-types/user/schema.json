@@ -9,7 +9,7 @@
     "displayName": "User"
   },
   "options": {
-    "timestamps": true
+    "draftAndPublish": false
   },
   "attributes": {
     "username": {
@@ -65,11 +65,22 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "rutina": {
+    "rutinas": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToMany",
       "target": "api::rutina.rutina",
-      "mappedBy": "user"
+      "mappedBy": "users"
+    },
+    "fotoPerfil": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Marcas": {
+      "type": "text"
     }
   }
 }

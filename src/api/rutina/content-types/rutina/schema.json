@@ -8,7 +8,7 @@
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -37,20 +37,20 @@
         "semana 6"
       ]
     },
-    "ejercicios": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::ejercicio.ejercicio",
-      "mappedBy": "rutina"
-    },
     "notes": {
       "type": "string"
     },
-    "user": {
+    "users": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToMany",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "rutina"
+      "inversedBy": "rutinas"
+    },
+    "ejercicios": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::ejercicio.ejercicio",
+      "mappedBy": "rutinas"
     }
   }
 }

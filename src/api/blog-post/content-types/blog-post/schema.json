@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "blog_posts",
+  "info": {
+    "singularName": "blog-post",
+    "pluralName": "blog-posts",
+    "displayName": "BlogPost",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "featuredImage": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Titulo": {
+      "type": "string",
+      "required": true
+    },
+    "DescripcionCorta": {
+      "type": "blocks",
+      "required": true
+    },
+    "Descripcion": {
+      "type": "blocks",
+      "required": true
+    },
+    "blog_post": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::blog-post.blog-post"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "Titulo",
+      "required": true
+    },
+    "Estado": {
+      "type": "enumeration",
+      "enum": [
+        "Borrador",
+        "Publicado"
+      ],
+      "required": true,
+      "default": "Publicado"
+    }
+  }
+}

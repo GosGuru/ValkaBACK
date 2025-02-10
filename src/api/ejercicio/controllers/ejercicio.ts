@@ -5,32 +5,39 @@
 // src/api/ejercicio/controllers/ejercicio.js
 
 import { factories } from "@strapi/strapi";
+import { Context } from "koa";
 
 export default factories.createCoreController(
   "api::ejercicio.ejercicio",
   ({ strapi }) => ({
-    // Sobrescribiendo el método findOne
-    async findOne(ctx) {
-      const { id } = ctx.params; // Obtiene el ID de los parámetros de la URL
+    async findOne(ctx: Context) {
+      const { id } = ctx.params;
+
+      if (!id) {
+        return ctx.badRequest("El ID es requerido");
+      }
 
       try {
-        // Realiza la búsqueda del recurso en la base de datos
-        const entity = await strapi.db
-          .query("api::ejercicio.ejercicio")
-          .findOne({
-            where: { id },
-            populate: ["videoURL", "rutina"], // Asegúrate de incluir las relaciones necesarias
-          });
+        // Forzamos que se poblacion el campo videoURL de forma detallada
+        const entity = await strapi.entityService.findOne(
+          "api::ejercicio.ejercicio",
+          id,
+          {
+            populate: {
+              videoURL: { populate: "*" }, // o simplemente: videoURL: true
+              // Si tienes otras relaciones que quieras incluir, agrégalas aquí
+            },
+          }
+        );
 
         if (!entity) {
-          return ctx.notFound("El ejercicio no fue encontrado.");
+          return ctx.notFound();
         }
 
-        // Devuelve el recurso encontrado
-        return this.transformResponse(entity);
+        return ctx.send({ data: entity });
       } catch (error) {
-        strapi.log.error("Error en findOne:", error);
-        return ctx.badRequest("Hubo un problema al obtener el ejercicio.");
+        console.error("Error en findOne:", error);
+        return ctx.internalServerError("Algo salió mal");
       }
     },
   })
